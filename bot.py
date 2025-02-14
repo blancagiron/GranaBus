@@ -95,7 +95,7 @@ async def handle_message(update: Update, context: CallbackContext):
             if parada_info:
                 latitud = parada_info.get("latitud")
                 longitud = parada_info.get("longitud")
-                await update.message.reply_text("📍 Ubicación de la parada:", parse_mode="Mardown")
+               # await update.message.reply_text("📍 Ubicación de la parada:", parse_mode="Mardown")
                 await update.message.reply_location(latitud, longitud)
             else:
                 await update.message.reply_text("🚫 No se ha podido obtener la ubicación de la parada")
