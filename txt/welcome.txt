@@ -1,0 +1,9 @@
+¡Hola! Escribe el nombre de una parada para obtener los horarios. ⏳
+
+    🔍 ¿Cómo funciona?
+    Escribe el nombre de una parada y te proporcionaré los horarios de paso de los autobuses interurbanos.
+
+    📜 Comandos disponibles:
+    ➡️ /start - Información sobre el bot
+    ➡️ /help - Ayuda sobre cómo usar el bot
+    ➡️ /paradas - Obtener paradas disponibles 

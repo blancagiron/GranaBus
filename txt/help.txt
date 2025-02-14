@@ -1,0 +1,28 @@
+💡 Ayuda del Bot GranaBus
+
+    🔍 ¿Cómo funciona?
+    Escribe el nombre de una parada y te proporcionaré los horarios de paso de los autobuses interurbanos.
+
+    💬 Ejemplo de uso:
+        Escribe el nombre de la parada (por ejemplo, Tierno Galván 1).
+        El bot te responderá con los horarios de los autobuses que pasan por esa parada.
+
+    📜 Comandos disponibles: 
+    ➡️ /start - Comenzar
+    ➡️ /help - Muestra este mensaje de ayuda
+    ➡️ /paradas - Consulta de paradas
+
+    Primero, escribe el nombre del núcleo (ciudad o zona) donde buscas la parada.
+    El bot te mostrará una lista de paradas disponibles en ese núcleo.
+    Luego, escribe el nombre de una parada para ver los horarios de los autobuses.
+
+    ✍️ Ejemplo paso a paso:
+    1️⃣ Usa /paradas
+    2️⃣ Escribe: Cúllar Vega
+    3️⃣ El bot te mostrará las paradas de Cúllar Vega
+    4️⃣ Escribe: Cádiz
+    5️⃣ El bot te proporciona los horarios de los autobuses en esa parada
+
+    📝 Notas importantes:
+        Asegúrate de escribir el nombre de la parada correctamente.
+        Si no encuentras una parada, verifica la ortografía o intenta con otro nombre similar.
