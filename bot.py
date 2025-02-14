@@ -99,7 +99,7 @@ async def handle_message(update: Update, context: CallbackContext):
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
-URL = f"https://TU_NOMBRE_DE_APP.herokuapp.com/{TOKEN}"
+URL = f"https://{os.getenv('RAILWAY_STATIC_URL')}/{TOKEN}"
 
 application = Application.builder().token(TOKEN).build()
 
@@ -119,8 +119,5 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("paradas", paradas))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        webhook_url=URL
-    )
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
