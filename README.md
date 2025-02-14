@@ -19,7 +19,7 @@ The bot is deployed using [Railway](https://railway.app/), a platform that facil
 
 ## Usage
 
-🔗 You can find the bot in this link [ t.me/GranaBusBot](t.me/GranaBusBot) 
+🔗 You can find the bot in this link [ t.me/GranaBusBot](https://t.me/GranaBusBot) 
 
 1. **Start the Bot**: Initiate a conversation with the bot by sending the `/start` command.
 2. **Help Command**: Use the `/help` command to receive instructions on how to interact with the bot.
@@ -67,7 +67,9 @@ El bot está desplegado utilizando [Railway](https://railway.app/), una platafor
 
 ## Uso
 
-🔗 Puedes encontrar el bot en este link [ t.me/GranaBusBot](t.me/GranaBusBot) 
+🔗 Puedes encontrar el bot en este link [t.me/GranaBusBot](https://t.me/GranaBusBot) 
+
+
 
 1. **Iniciar el Bot**: Inicia una conversación con el bot enviando el comando `/start`.
 2. **Comando de Ayuda**: Utiliza el comando `/help` para recibir instrucciones sobre cómo interactuar con el bot.
