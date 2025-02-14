@@ -1,5 +1,4 @@
-|![Logo](/img/logo.png) | ![Titulo](/img/titulo.png) |
-|-----------|-----------|
+![Logo](/img/logo.png)  ![Titulo](/img/titulo.png) 
 
 # GranaBus. Bus Schedule Bot for Granada
 
@@ -15,7 +14,8 @@ This project is a Telegram bot designed to provide real-time bus schedules for i
 
 ## Deployment
 
-The bot is deployed using [Railway](https://railway.app/), a platform that facilitates seamless deployment of applications.
+The bot is deployed using [Railway](https://railway.app/), a platform that facilitates seamless deployment of applications. This project is my first experience using Railway to deploy an application to the cloud. Although I have followed the steps carefully, since it is my first attempt, you might encounter some errors or configurations that still need adjustment. 
+
 
 ## Usage
 
@@ -39,7 +39,7 @@ This project was developed for educational purposes to gain experience in API in
 
 ---
 
-# Bot de Horarios de Autobuses para Granada
+# GranaBus. Bot de Horarios de Autobuses para Granada
 
 ## Introducción
 
@@ -53,7 +53,8 @@ Este proyecto es un bot de Telegram diseñado para proporcionar horarios de auto
 
 ## Despliegue
 
-El bot está desplegado utilizando [Railway](https://railway.app/), una plataforma que facilita el despliegue sin problemas de aplicaciones.
+El bot está desplegado utilizando [Railway](https://railway.app/), una plataforma que facilita el despliegue sin problemas de aplicaciones. Este proyecto es mi primera experiencia utilizando Railway para el despliegue de una aplicación en la nube. Aunque he seguido los pasos cuidadosamente, dado que es mi primer intento, es posible que encuentres algunos errores o configuraciones que aún necesiten ajuste.
+
 
 ## Uso
 
