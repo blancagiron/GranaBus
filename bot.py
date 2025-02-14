@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import asyncio
 from flask import Flask, request
 from telegram import Update
 from telegram.ext import (
@@ -106,7 +107,10 @@ application = Application.builder().token(TOKEN).build()
 @app.route(f"/{TOKEN}", methods=["POST"])
 def receive_update():
     update = Update.de_json(request.get_json(), application.bot)
-    application.process_update(update) 
+    
+    
+    asyncio.create_task(application.process_update(update))
+    
     return "OK", 200
 
 @app.route("/")
