@@ -27,7 +27,7 @@ for parada in paradas_lista:
     nombre_parada = parada["nombre"].lower()
     id_parada = parada["idParada"]
 
-    if nombre_nucleo not not nucleos_dict:
+    if nombre_nucleo not in nucleos_dict:
         nucleos_dict[nombre_nucleo] = []
     nucleos_dict[nombre_nucleo].append(nombre_parada)
 
