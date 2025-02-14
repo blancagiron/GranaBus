@@ -8,13 +8,17 @@ import asyncio
 
 ELEGIR_NUCLEO = 1
 
+# Se cargan los datos desde el archivo JSON de paradas, este archivo se ha generado previamente con una petición a la API. 
+# Se ha hecho así porque no he encontrado los ID de las paradas interurbanas, por lo que he necesitado hacer una petición a la API para obtenerlos.
+# Se mapea porque para el usuario es más fácil buscar por nombre de parada que por ID.
+
 with open("paradas_granada.json", "r", encoding="utf-8") as file:
     paradas_data = json.load(file)
 
 paradas_lista = paradas_data.get("paradas", [])
 
-nucleos_dict = {}
-paradas_dict = {}
+nucleos_dict = {} # Diccionario para mapear núcleos con paradas
+paradas_dict = {} # Diccionario para mapear paradas con ID
 
 for parada in paradas_lista:
     nombre_nucleo = parada["nucleo"].lower()
@@ -26,7 +30,7 @@ for parada in paradas_lista:
     paradas_dict[nombre_parada] = id_parada
 
 def obtener_horarios(id_parada):
-    url = f"http://api.ctan.es/v1/Consorcios/3/paradas/{id_parada}/servicios"
+    url = f"http://api.ctan.es/v1/Consorcios/3/paradas/{id_parada}/servicios" # se obtienen servicios haciendo una petición a la API con el ID de la parada
     response = requests.get(url)
     if response.status_code == 200:
         try:
@@ -54,6 +58,9 @@ async def paradas(update: Update, context: CallbackContext):
     await update.message.reply_text(mensaje)
     return ELEGIR_NUCLEO
 
+# El comando /paradas sirve para que el usuario pueda ver las paradas, pero como hay muchas paradas, se le pide que elija un núcleo primero.
+# Una vez que el usuario elige un núcleo, se le muestran las paradas de ese núcleo.
+# Por eso se usa un ConversationHandler para manejar el estado de la conversación.
 async def elegir_nucleo(update: Update, context: CallbackContext):
     nombre_nucleo = update.message.text.lower()
     if nombre_nucleo in nucleos_dict:
@@ -66,11 +73,13 @@ async def elegir_nucleo(update: Update, context: CallbackContext):
         await update.message.reply_text("🚫 Núcleo no encontrado. Inténtalo de nuevo.")
     return ConversationHandler.END
 
+
+# Manejo de mensajes de texto que no sean comandos
 async def handle_message(update: Update, context: CallbackContext):
     nombre_parada = update.message.text.lower()
-    if nombre_parada in paradas_dict:
-        id_parada = paradas_dict[nombre_parada]
-        servicios = obtener_horarios(id_parada)
+    if nombre_parada in paradas_dict: # Si el nombre de la parada está en el diccionario de paradas, se obtienen los horarios
+        id_parada = paradas_dict[nombre_parada]  # Se obtiene el ID de la parada
+        servicios = obtener_horarios(id_parada) # Se obtienen los horarios
         if servicios:
             mensaje = f"🚌 Horarios para la parada *{nombre_parada.title()}*:\n"
             for servicio in servicios:
@@ -91,10 +100,12 @@ URL = f"https://{os.getenv('RAILWAY_STATIC_URL')}/{TOKEN}"
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
-application = Application.builder().token(TOKEN).build()
-conv_handler = ConversationHandler(
+# Configuración del bot
+
+application = Application.builder().token(TOKEN).build() # Se crea la aplicación del bot con el token
+conv_handler = ConversationHandler( # manejar conversacion de paradas 
     entry_points=[CommandHandler("paradas", paradas)],
-    states={ELEGIR_NUCLEO: [MessageHandler(filters.TEXT & ~filters.COMMAND, elegir_nucleo)]},
+    states={ELEGIR_NUCLEO: [MessageHandler(filters.TEXT & ~filters.COMMAND, elegir_nucleo)]}, # Se espera mensaje que no sea comando
     fallbacks=[]
 )
 application.add_handler(CommandHandler("start", start))
