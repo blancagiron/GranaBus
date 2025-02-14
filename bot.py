@@ -1,13 +1,14 @@
 import os
 import json
 import requests
-import asyncio
 from flask import Flask, request
 from telegram import Update
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, filters, 
     CallbackContext, ConversationHandler
 )
+import asyncio
+from functools import partial
 
 # Estados para la conversación
 ELEGIR_NUCLEO = 1
@@ -100,23 +101,30 @@ app = Flask(__name__)
 TOKEN = os.getenv("TOKEN")
 URL = f"https://{os.getenv('RAILWAY_STATIC_URL')}/{TOKEN}"
 
-# Create and initialize application
-async def create_application():
-    app = Application.builder().token(TOKEN).build()
-    
-    # Add handlers
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help))
-    app.add_handler(CommandHandler("paradas", paradas))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    await app.initialize()
-    await app.start()
-    await app.bot.set_webhook(url=URL)
-    
-    return app
 
-# Create event loop and application
+async def create_application():
+    application = Application.builder().token(TOKEN).build()
+    
+    # Crear el manejador de conversación
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("paradas", paradas)],
+        states={
+            ELEGIR_NUCLEO: [MessageHandler(filters.TEXT & ~filters.COMMAND, elegir_nucleo)]
+        },
+        fallbacks=[],
+    )
+    
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help))
+    application.add_handler(conv_handler)
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    
+    await application.initialize()
+    await application.start()
+    await application.bot.set_webhook(url=URL)
+    
+    return application
+
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 application = loop.run_until_complete(create_application())
@@ -128,15 +136,9 @@ def webhook():
         
         async def process_update():
             await application.process_update(update)
-            
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(process_update())
-        finally:
-            loop.run_until_complete(loop.shutdown_asyncgens())
-            loop.close()
-            
+        
+       
+        asyncio.run(process_update())
         return "ok"
 
 @app.route("/")
@@ -144,5 +146,4 @@ def home():
     return "¡El bot está funcionando! 🚀"
 
 if __name__ == "__main__":
-    # Run the Flask application
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
