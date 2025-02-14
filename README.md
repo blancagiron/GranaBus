@@ -9,7 +9,7 @@ This project is a Telegram bot designed to provide real-time bus schedules for i
 ## Features
 
 - **Real-Time Bus Schedules**: Retrieve up-to-date bus arrival times for interurban routes.
-- **Parada Search**: Search for bus stops by name, regardless of case sensitivity or accentuation.
+- **Bus Stop Search**: Search for bus stops by name, regardless of case sensitivity or accentuation.
 - **Location Sharing**: Receive the geographical location of a selected bus stop.
 
 ## Deployment
@@ -36,6 +36,15 @@ This bot utilizes data from the [Consorcio de Transporte Metropolitano del Área
 ## Disclaimer
 
 This project was developed for educational purposes to gain experience in API integration and bot development. While it has been tested and functions as intended, users should verify critical information through official channels when necessary.
+
+---
+
+## Usage example
+
+| Screenshot 1 | Screenshot 2 | Screenshot 3 | Screenshot 4 |
+|--------------|--------------|--------------|--------------|
+| ![Image 1](/img/start.jpg) | ![Image 2](/img/help.jpg) | ![Image 3](/img/paradas.jpg) | ![Image 4](/img/ejemplo-ortografia.jpg) |
+
 
 ---
 
