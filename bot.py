@@ -27,12 +27,11 @@ for parada in paradas_lista:
     nombre_parada = parada["nombre"].lower()
     id_parada = parada["idParada"]
 
-    if nombre_nucleo not in nucleos_dict:
+    if nombre_nucleo not not nucleos_dict:
         nucleos_dict[nombre_nucleo] = []
     nucleos_dict[nombre_nucleo].append(nombre_parada)
 
     paradas_dict[nombre_parada] = id_parada
-
 
 def obtener_horarios(id_parada):
     url = f"http://api.ctan.es/v1/Consorcios/3/paradas/{id_parada}/servicios"
@@ -51,7 +50,6 @@ async def start(update: Update, context: CallbackContext):
         mensaje = file.read()
     
     await update.message.reply_text(mensaje, parse_mode="Markdown")
-
 
 async def help(update: Update, context: CallbackContext):
     with open("txt/help.txt", "r", encoding="utf-8") as file:
@@ -102,25 +100,48 @@ app = Flask(__name__)
 TOKEN = os.getenv("TOKEN")
 URL = f"https://{os.getenv('RAILWAY_STATIC_URL')}/{TOKEN}"
 
+# Initialize the application globally
 application = Application.builder().token(TOKEN).build()
 
+# Setup handlers
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler("help", help))
+application.add_handler(CommandHandler("paradas", paradas))
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+# Create a new event loop for the webhook handler
+async def process_update(json_data):
+    update = Update.de_json(json_data, application.bot)
+    await application.process_update(update)
+
 @app.route(f"/{TOKEN}", methods=["POST"])
-def receive_update():
-    update = Update.de_json(request.get_json(), application.bot)
-    
-    loop = asyncio.get_event_loop()
-    loop.run_in_executor(None, asyncio.run, application.process_update(update))
-    
-    return "OK", 200
+def webhook():
+    if request.method == "POST":
+        # Create new event loop for this request
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        try:
+            # Run the update processing in the event loop
+            loop.run_until_complete(process_update(request.json))
+        finally:
+            loop.close()
+            
+        return "OK"
 
 @app.route("/")
 def home():
     return "¡El bot está funcionando! 🚀"
 
 if __name__ == "__main__":
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help))
-    application.add_handler(CommandHandler("paradas", paradas))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
+    # Set the webhook
+    async def setup_webhook():
+        await application.bot.set_webhook(url=URL)
+    
+    # Run the webhook setup
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(setup_webhook())
+    
+    # Run Flask app
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
