@@ -106,7 +106,7 @@ application = Application.builder().token(TOKEN).build()
 @app.route(f"/{TOKEN}", methods=["POST"])
 def receive_update():
     update = Update.de_json(request.get_json(), application.bot)
-    application.update_queue.put(update)
+    application.process_update(update) 
     return "OK", 200
 
 @app.route("/")
