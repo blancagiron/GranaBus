@@ -119,5 +119,4 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("paradas", paradas))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
