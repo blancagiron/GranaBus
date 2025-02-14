@@ -108,8 +108,8 @@ application = Application.builder().token(TOKEN).build()
 def receive_update():
     update = Update.de_json(request.get_json(), application.bot)
     
-    
-    asyncio.create_task(application.process_update(update))
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, asyncio.run, application.process_update(update))
     
     return "OK", 200
 
