@@ -80,6 +80,10 @@ async def handle_message(update: Update, context: CallbackContext):
     if nombre_parada in paradas_dict: # Si el nombre de la parada está en el diccionario de paradas, se obtienen los horarios
         id_parada = paradas_dict[nombre_parada]  # Se obtiene el ID de la parada
         servicios = obtener_horarios(id_parada) # Se obtienen los horarios
+
+         # Buscar la latitud y longitud de la parada
+        parada_info = next((p for p in paradas_lista if p["idParada"] == id_parada), None)
+
         if servicios:
             mensaje = f"🚌 Horarios para la parada *{nombre_parada.title()}*:\n"
             for servicio in servicios:
@@ -87,6 +91,13 @@ async def handle_message(update: Update, context: CallbackContext):
                 linea = servicio.get("linea", "Desconocida")
                 mensaje += f"🚍 Línea {linea}: {hora}\n"
             await update.message.reply_text(mensaje, parse_mode="Markdown")
+
+            if parada_info:
+                latitud = parada_info.get("latitud")
+                longitud = parada_info.get("longitud")
+                await update.message.reply_location(latitud, longitud)
+            else:
+                await update.message.reply_text("🚫 No se ha podido obtener la ubicación de la parada")
         else:
             await update.message.reply_text("⏳ No hay horarios disponibles.")
     else:
