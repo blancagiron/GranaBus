@@ -3,23 +3,16 @@ import json
 import requests
 from flask import Flask, request
 from telegram import Update
-from telegram.ext import (
-    Application, CommandHandler, MessageHandler, filters, 
-    CallbackContext, ConversationHandler
-)
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext, ConversationHandler
 import asyncio
-from functools import partial
 
-# Estados para la conversación
 ELEGIR_NUCLEO = 1
 
-# Cargar datos de paradas desde el archivo JSON
 with open("paradas_granada.json", "r", encoding="utf-8") as file:
     paradas_data = json.load(file)
 
 paradas_lista = paradas_data.get("paradas", [])
 
-# Diccionarios
 nucleos_dict = {}
 paradas_dict = {}
 
@@ -27,11 +20,9 @@ for parada in paradas_lista:
     nombre_nucleo = parada["nucleo"].lower()
     nombre_parada = parada["nombre"].lower()
     id_parada = parada["idParada"]
-
     if nombre_nucleo not in nucleos_dict:
         nucleos_dict[nombre_nucleo] = []
     nucleos_dict[nombre_nucleo].append(nombre_parada)
-
     paradas_dict[nombre_parada] = id_parada
 
 def obtener_horarios(id_parada):
@@ -41,21 +32,18 @@ def obtener_horarios(id_parada):
         try:
             data = response.json()
             return data.get("servicios", [])
-        except json.JSONDecodeError:
+        except:
             return None
     return None
 
-# Comandos del bot
 async def start(update: Update, context: CallbackContext):
     with open("txt/welcome.txt", "r", encoding="utf-8") as file:
         mensaje = file.read()
-    
     await update.message.reply_text(mensaje, parse_mode="Markdown")
 
 async def help(update: Update, context: CallbackContext):
     with open("txt/help.txt", "r", encoding="utf-8") as file:
         mensaje = file.read()
-    
     await update.message.reply_text(mensaje, parse_mode="Markdown")
 
 async def paradas(update: Update, context: CallbackContext):
@@ -95,50 +83,34 @@ async def handle_message(update: Update, context: CallbackContext):
     else:
         await update.message.reply_text("🚫 Parada no encontrada.")
 
-# Flask para Webhooks
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
 URL = f"https://{os.getenv('RAILWAY_STATIC_URL')}/{TOKEN}"
 
-
-async def create_application():
-    application = Application.builder().token(TOKEN).build()
-    
-    # Crear el manejador de conversación
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("paradas", paradas)],
-        states={
-            ELEGIR_NUCLEO: [MessageHandler(filters.TEXT & ~filters.COMMAND, elegir_nucleo)]
-        },
-        fallbacks=[],
-    )
-    
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help))
-    application.add_handler(conv_handler)
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    await application.initialize()
-    await application.start()
-    await application.bot.set_webhook(url=URL)
-    
-    return application
-
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-application = loop.run_until_complete(create_application())
+
+application = Application.builder().token(TOKEN).build()
+conv_handler = ConversationHandler(
+    entry_points=[CommandHandler("paradas", paradas)],
+    states={ELEGIR_NUCLEO: [MessageHandler(filters.TEXT & ~filters.COMMAND, elegir_nucleo)]},
+    fallbacks=[]
+)
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler("help", help))
+application.add_handler(conv_handler)
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+loop.run_until_complete(application.initialize())
+loop.run_until_complete(application.start())
+loop.run_until_complete(application.bot.set_webhook(url=URL))
 
 @app.route(f"/{TOKEN}", methods=["POST"])
 def webhook():
     if request.method == "POST":
         update = Update.de_json(request.get_json(force=True), application.bot)
-        
-        async def process_update():
-            await application.process_update(update)
-        
-       
-        asyncio.run(process_update())
+        loop.run_until_complete(application.process_update(update))
         return "ok"
 
 @app.route("/")
