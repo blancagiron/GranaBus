@@ -93,12 +93,12 @@ async def handle_message(update: Update, context: CallbackContext):
             await update.message.reply_text(mensaje, parse_mode="Markdown")
 
             if parada_info:
-                latitud = parada_info.get("latitud")
-                longitud = parada_info.get("longitud")
-               # await update.message.reply_text("📍 Ubicación de la parada:", parse_mode="Mardown")
-                await update.message.reply_location(latitud, longitud)
+                latitud = parada_info["latitud"]
+                longitud = parada_info["longitud"]
+                await update.message.reply_text("📍 *Ubicación de la parada:*", parse_mode="Markdown")
+                await update.message.reply_location(latitude=latitud, longitude=longitud)
             else:
-                await update.message.reply_text("🚫 No se ha podido obtener la ubicación de la parada")
+                await update.message.reply_text("📍 Ubicación no disponible para esta parada.")
         else:
             await update.message.reply_text("⏳ No hay horarios disponibles.")
     else:
